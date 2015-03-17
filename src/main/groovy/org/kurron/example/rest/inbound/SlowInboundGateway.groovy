@@ -15,6 +15,7 @@
  */
 package org.kurron.example.rest.inbound
 
+import org.apache.commons.codec.digest.DigestUtils
 import org.kurron.example.rest.ApplicationProperties
 import org.kurron.feedback.AbstractFeedbackAware
 import org.kurron.stereotype.InboundRestGateway
@@ -25,6 +26,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 
+import static org.kurron.example.rest.feedback.ExampleFeedbackContext.CYPHER_TEXT_COMPLETE
+import static org.kurron.example.rest.feedback.ExampleFeedbackContext.CYPHER_TEXT_GENERATION
 import static org.springframework.web.bind.annotation.RequestMethod.GET
 
 /**
@@ -52,9 +55,12 @@ class SlowInboundGateway extends AbstractFeedbackAware {
      */
     @RequestMapping( value = '/{id}', method = GET )
     ResponseEntity<SlowHypermediaControl> retrieve( @PathVariable( 'id' ) final String id ) {
-        def control = newControl( HttpStatus.OK )
-        control.cypherText = id + ' - ' + UUID.randomUUID().toString()
+        feedbackProvider.sendFeedback( CYPHER_TEXT_GENERATION, id )
+        def control = new SlowHypermediaControl()
+        control.httpCode = HttpStatus.OK.value()
+        control.cypherText = DigestUtils.md5Hex( id )
         def headers = new HttpHeaders( contentType: SlowHypermediaControl.MEDIA_TYPE )
+        feedbackProvider.sendFeedback(CYPHER_TEXT_COMPLETE, control.cypherText )
         new ResponseEntity( control, headers, HttpStatus.OK )
     }
 
@@ -64,10 +70,4 @@ class SlowInboundGateway extends AbstractFeedbackAware {
      * @param status the HTTP status to save in the control.
      * @return partially populated control.
      */
-    @SuppressWarnings( 'DuplicateStringLiteral' )
-    private static SlowHypermediaControl newControl( HttpStatus status ) {
-        def control = new SlowHypermediaControl()
-        control.httpCode = status.value()
-        control
     }
-}
