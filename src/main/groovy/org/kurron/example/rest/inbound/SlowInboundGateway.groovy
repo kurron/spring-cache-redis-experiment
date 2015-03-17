@@ -37,14 +37,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET
 @RequestMapping( value = '/slow' )
 class SlowInboundGateway extends AbstractFeedbackAware {
 
-    /**
-     * Provides currently active property values.
-     */
-    private final ApplicationProperties configuration
+    @Autowired
+    private CypherGenerator generator
 
     @Autowired
-    SlowInboundGateway( final ApplicationProperties aConfiguration ) {
-        configuration = aConfiguration
+    SlowInboundGateway( final CypherGenerator aGenerator ) {
+        generator = aGenerator
     }
 
     /**
@@ -58,7 +56,7 @@ class SlowInboundGateway extends AbstractFeedbackAware {
         feedbackProvider.sendFeedback( CYPHER_TEXT_GENERATION, id )
         def control = new SlowHypermediaControl()
         control.httpCode = HttpStatus.OK.value()
-        control.cypherText = DigestUtils.md5Hex( id )
+        control.cypherText = generator.encode( id )
         def headers = new HttpHeaders( contentType: SlowHypermediaControl.MEDIA_TYPE )
         feedbackProvider.sendFeedback(CYPHER_TEXT_COMPLETE, control.cypherText )
         new ResponseEntity( control, headers, HttpStatus.OK )
