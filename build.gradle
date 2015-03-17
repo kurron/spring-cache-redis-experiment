@@ -45,6 +45,7 @@ ext.coverageExcludes = ['org/kurron/example/rest/Application',
 ]
 
 apply plugin: 'build-announcements'
+apply plugin: 'idea'
 
 apply from: "$rootDir/gradle/repositories.gradle"
 apply from: "$rootDir/gradle/version.gradle"
