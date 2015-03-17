@@ -2,6 +2,7 @@ package org.kurron.example.rest.inbound
 
 import org.apache.commons.codec.digest.DigestUtils
 import org.kurron.feedback.AbstractFeedbackAware
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 import static org.kurron.example.rest.feedback.ExampleFeedbackContext.CYPHER_TEXT_GENERATION
@@ -10,6 +11,7 @@ import static org.kurron.example.rest.feedback.ExampleFeedbackContext.CYPHER_TEX
  * A fake implementation of a cypher text generator.
  */
 @Service
+@Cacheable( 'cypher-text' )
 class SlowCypherGenerator  extends AbstractFeedbackAware implements CypherGenerator {
     @Override
     String encode( String plainText ) {

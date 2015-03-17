@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.cache.annotation.EnableCaching
+import org.springframework.cache.concurrent.ConcurrentMapCache
+import org.springframework.cache.support.SimpleCacheManager
 import org.springframework.context.annotation.Bean
 
 /**
@@ -30,6 +33,7 @@ import org.springframework.context.annotation.Bean
 @SpringBootApplication
 //@EnableDiscoveryClient
 @EnableConfigurationProperties( ApplicationProperties )
+@EnableCaching
 @Slf4j
 @SuppressWarnings( 'GStringExpressionWithinString' )
 class Application {
@@ -67,5 +71,12 @@ class Application {
     @Bean
     FeedbackAwareBeanPostProcessor feedbackAwareBeanPostProcessor() {
         new FeedbackAwareBeanPostProcessor( serviceCode, serviceInstance, realm )
+    }
+
+    @Bean
+    SimpleCacheManager simpleCacheManager() {
+        def bean = new SimpleCacheManager()
+        bean.caches = [ new ConcurrentMapCache( 'cypher-text' ) ]
+        bean
     }
 }
