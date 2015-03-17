@@ -11,8 +11,8 @@ import static org.kurron.example.rest.feedback.ExampleFeedbackContext.CYPHER_TEX
  * A fake implementation of a cypher text generator.
  */
 @Service
-@Cacheable( 'cypher-text' )
 class SlowCypherGenerator  extends AbstractFeedbackAware implements CypherGenerator {
+    @Cacheable( 'cypher-text' )
     @Override
     String encode( String plainText ) {
         feedbackProvider.sendFeedback( CYPHER_TEXT_GENERATION, plainText )

@@ -22,9 +22,10 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.cache.concurrent.ConcurrentMapCache
-import org.springframework.cache.support.SimpleCacheManager
 import org.springframework.context.annotation.Bean
+import org.springframework.data.redis.cache.RedisCacheManager
+import org.springframework.data.redis.connection.RedisConnectionFactory
+import org.springframework.data.redis.core.StringRedisTemplate
 
 /**
  * This is the main entry into the application. Running from the command-line using embedded Tomcat will invoke
@@ -74,9 +75,12 @@ class Application {
     }
 
     @Bean
-    SimpleCacheManager simpleCacheManager() {
-        def bean = new SimpleCacheManager()
-        bean.caches = [ new ConcurrentMapCache( 'cypher-text' ) ]
-        bean
+    RedisCacheManager redisCacheManager( StringRedisTemplate redisTemplate ) {
+        new RedisCacheManager( redisTemplate )
+    }
+
+    @Bean
+    StringRedisTemplate stringRedisTemplate( RedisConnectionFactory connectionFactory ) {
+        new StringRedisTemplate( connectionFactory )
     }
 }
