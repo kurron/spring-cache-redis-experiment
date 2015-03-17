@@ -76,7 +76,9 @@ class Application {
 
     @Bean
     RedisCacheManager redisCacheManager( StringRedisTemplate redisTemplate ) {
-        new RedisCacheManager( redisTemplate )
+        def bean = new RedisCacheManager( redisTemplate )
+        bean.usePrefix = true
+        bean
     }
 
     @Bean
