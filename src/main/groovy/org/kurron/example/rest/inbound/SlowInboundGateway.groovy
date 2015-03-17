@@ -53,12 +53,11 @@ class SlowInboundGateway extends AbstractFeedbackAware {
      */
     @RequestMapping( value = '/{id}', method = GET )
     ResponseEntity<SlowHypermediaControl> retrieve( @PathVariable( 'id' ) final String id ) {
-        feedbackProvider.sendFeedback( CYPHER_TEXT_GENERATION, id )
         def control = new SlowHypermediaControl()
         control.httpCode = HttpStatus.OK.value()
         control.cypherText = generator.encode( id )
         def headers = new HttpHeaders( contentType: SlowHypermediaControl.MEDIA_TYPE )
-        feedbackProvider.sendFeedback(CYPHER_TEXT_COMPLETE, control.cypherText )
+        feedbackProvider.sendFeedback( CYPHER_TEXT_COMPLETE, control.cypherText )
         new ResponseEntity( control, headers, HttpStatus.OK )
     }
 
